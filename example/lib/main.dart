@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:secp256k1_ffi/secp256k1_ffi.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +17,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    secp256k1FFI.privateKey.generate();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

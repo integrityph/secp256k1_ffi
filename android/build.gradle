@@ -1,3 +1,76 @@
+// group = "com.example.secp256k1_ffi"
+// version = "1.0-SNAPSHOT"
+
+// buildscript {
+//     ext.kotlin_version = "2.1.0"
+//     repositories {
+//         google()
+//         mavenCentral()
+//     }
+
+//     dependencies {
+//         classpath("com.android.tools.build:gradle:8.9.1")
+//         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+//     }
+// }
+
+// allprojects {
+//     repositories {
+//         google()
+//         mavenCentral()
+//     }
+// }
+
+// apply plugin: "com.android.library"
+// apply plugin: "kotlin-android"
+
+// android {
+//     namespace = "com.example.secp256k1_ffi"
+
+//     compileSdk = 36
+
+//     compileOptions {
+//         sourceCompatibility = JavaVersion.VERSION_11
+//         targetCompatibility = JavaVersion.VERSION_11
+//     }
+
+//     kotlinOptions {
+//         jvmTarget = JavaVersion.VERSION_11
+//     }
+
+//     sourceSets {
+//         main.java.srcDirs += "src/main/kotlin"
+//         test.java.srcDirs += "src/test/kotlin"
+//     }
+
+//     defaultConfig {
+//         minSdk = 24
+//     }
+
+//     dependencies {
+//         testImplementation("org.jetbrains.kotlin:kotlin-test")
+//         testImplementation("org.mockito:mockito-core:5.0.0")
+//     }
+
+//     testOptions {
+//         unitTests.all {
+//             useJUnitPlatform()
+
+//             testLogging {
+//                events "passed", "skipped", "failed", "standardOut", "standardError"
+//                outputs.upToDateWhen {false}
+//                showStandardStreams = true
+//             }
+//         }
+//     }
+
+//     externalNativeBuild {
+//         cmake {
+//             path "../src/CMakeLists.txt"
+//         }
+//     }
+// }
+
 group = "com.example.secp256k1_ffi"
 version = "1.0-SNAPSHOT"
 
@@ -64,9 +137,154 @@ android {
         }
     }
 
-    externalNativeBuild {
-        cmake {
-            path "../src/CMakeLists.txt"
+    // ===================================================================
+    // =========== INTELLIGENT NATIVE BUILD CONFIGURATION ================
+    // ===================================================================
+
+    // 1. Define the location of our pre-compiled libraries.
+    def prebuiltSoDir = new File(project.projectDir, 'src/main/jniLib')
+
+    // 2. Define the ABIs your plugin supports.
+    def supportedAbis = ['arm64-v8a', 'armeabi-v7a', 'x86_64']
+
+    // 3. Check if the pre-compiled .so files exist for all supported ABIs.
+    def prebuiltLibrariesExist = supportedAbis.every { abi ->
+        println("secp256k1_ffi: prebuiltLibrariesExist looking for ${prebuiltSoDir}/${abi}/libsecp256k1_ffi.so")
+        new File(prebuiltSoDir, "${abi}/libsecp256k1_ffi.so").exists()
+    }
+
+    // 4. Main Logic: Decide whether to build from source or use pre-builts.
+    if (prebuiltLibrariesExist) {
+        // --- CONSUMER PATH ---
+        println("secp256k1_ffi: Found pre-compiled libraries in src/main/jniLibs. Skipping native build.")
+        
+        sourceSets {
+            main {
+                jniLibs.srcDirs = [prebuiltSoDir]
+            }
         }
+
+    } else {
+        // --- MAINTAINER PATH ---
+        println("secp256k1_ffi: Pre-compiled libraries not found. Starting native build.")
+
+        // Use the NDK version from the main Flutter project.
+        ndkVersion = android.ndkVersion
+
+        println("android.ndkVersion ${android.ndkVersion}")
+        println("android.ndkDirectory ${android.ndkDirectory}")
+
+        // Configure the native build.
+        externalNativeBuild {
+            cmake {
+                path = "../src/CMakeLists.txt"
+            }
+        }
+
+        // Specify which architectures to build.
+        defaultConfig {
+            ndk {
+                abiFilters.addAll(supportedAbis)
+            }
+        }
+
+        afterEvaluate {
+            android.libraryVariants.all { variant ->
+                if (!prebuiltLibrariesExist) { 
+                    def preBuildTask = variant.preBuildProvider.get()
+                    preBuildTask.dependsOn(tasks.named('buildNativeAndroidLibraries'))
+                    println("secp256k1_ffi: Auto-hooked 'buildNativeAndroidLibraries' to '${preBuildTask.name}'")
+                }
+            }
+        }
+    }
+    // ===================================================================
+    // ======================= END OF NATIVE BUILD =======================
+    // ===================================================================
+}
+
+// Task to perform the native build for all supported ABIs and copy to jniLibs
+tasks.register('buildNativeAndroidLibraries') {
+    group = "secp256k1_ffi"
+    description = "Builds the native secp256k1 FFI library for Android ABIs and copies to jniLibs."
+    def prebuiltSoDir = new File(project.projectDir, 'src/main/jniLib')
+    def supportedAbis = ['arm64-v8a', 'armeabi-v7a', 'x86_64']
+    def rootBuildPath = project.buildDir.toPath()
+
+    doLast {
+        // Ensure the jniLibs directory exists
+        mkdir(prebuiltSoDir)
+        
+        // Get the path to CMakeLists.txt
+        def cmakeSourceDir = project.file("../src")
+
+        def currentBuildType = ""
+        project.gradle.taskGraph.allTasks.each { task ->
+            if (task.name.toLowerCase().contains("debug")) {
+                currentBuildType = "debug"
+            } else if (task.name.toLowerCase().contains("release")) {
+                currentBuildType = "release"
+            }
+            // Break loop once determined
+            if (currentBuildType != "") return
+        }
+        if (currentBuildType == "") {
+            println("Warning: Could not determine current build type. Defaulting to 'debug'.")
+            currentBuildType = "debug"
+        }
+        println("Determined current build type for copying: ${currentBuildType}")
+
+        supportedAbis.each { abi ->
+            println("Copying compiled native library for ABI: ${abi} from AGP's stripped build output.")
+
+            // Construct the source path for the stripped native library
+            def sourceSoFile = new File(project.buildDir,
+                "intermediates/stripped_native_libs/${currentBuildType}/stripDebugDebugSymbols/out/lib/${abi}/libsecp256k1_ffi.so")
+
+            if (!sourceSoFile.exists()) {
+                // Fallback for release builds
+                sourceSoFile = new File(project.buildDir,
+                    "intermediates/stripped_native_libs/${currentBuildType}/stripReleaseDebugSymbols/out/lib/${abi}/libsecp256k1_ffi.so")
+            }
+
+            if (!sourceSoFile.exists()) {
+                throw new Exception("CRITICAL ERROR: AGP's stripped native library output for ${abi} and build type '${currentBuildType}' not found at expected path: ${sourceSoFile.absolutePath}. Please ensure AGP's strip task ran successfully.")
+            } else {
+                println("DEBUG: Source stripped file found: ${sourceSoFile.absolutePath}")
+            }
+
+            def targetJniLibDir = new File(prebuiltSoDir, abi)
+            mkdir(targetJniLibDir)
+
+            // Copy the compiled .so file
+            copy {
+                from sourceSoFile
+                into targetJniLibDir
+                rename { String fileName -> "libsecp256k1_ffi.so" }
+            }
+
+            println("Copied ${sourceSoFile.name} to ${targetJniLibDir.absolutePath}")
+
+            // Sanity check after copy
+            def finalSoFile = new File(targetJniLibDir, "libsecp256k1_ffi.so")
+            if (!finalSoFile.exists()) {
+                throw new Exception("CRITICAL ERROR: File ${finalSoFile.absolutePath} was NOT found in destination AFTER copy from AGP stripped output.")
+            }
+        }
+
+        println("Native Android libraries built and copied successfully to ${prebuiltSoDir.absolutePath}")
+    }
+}
+
+// Task to clean the generated native libraries and the marker file
+tasks.register('cleanNativeAndroidLibraries') {
+    group = "secp256k1_ffi"
+    description = "Cleans pre-compiled Android native libraries and the marker file."
+    def prebuiltSoDir = new File(project.projectDir, 'src/main/jniLib')
+
+    doLast {
+        delete prebuiltSoDir
+        // delete prebuiltMarkerFile
+        println("Cleaned pre-compiled Android libraries from ${prebuiltSoDir.absolutePath} and marker file.")
     }
 }

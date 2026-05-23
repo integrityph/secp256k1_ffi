@@ -16,9 +16,12 @@ option(SECP256K1_ENABLE_MODULE_SCHNORRSIG "Enable schnorrsig module." ON)
 option(SECP256K1_ENABLE_MODULE_MUSIG "Enable musig module." ON)
 option(SECP256K1_ENABLE_MODULE_ELLSWIFT "Enable ElligatorSwift module." ON)
 
+# CRITICAL FIX: Tell CMake to build shared (.so) libraries 
+# BEFORE it configures the secp256k1 repository.
+set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+
 FetchContent_MakeAvailable(secp256k1)
 
-set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 set_target_properties(secp256k1 PROPERTIES OUTPUT_NAME "secp256k1_ffi")
 
 target_link_options(secp256k1 PRIVATE "-Wl,-z,max-page-size=0x4000")
