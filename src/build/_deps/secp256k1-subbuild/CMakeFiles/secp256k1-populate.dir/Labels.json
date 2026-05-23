@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/CMakeFiles/secp256k1-populate"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/CMakeFiles/secp256k1-populate.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/CMakeFiles/secp256k1-populate-complete.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-build.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-configure.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-download.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-install.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-mkdir.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-patch.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-test.rule"
+		},
+		{
+			"file" : "/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/secp256k1-populate-prefix/src/secp256k1-populate-stamp/secp256k1-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"secp256k1-populate"
+		],
+		"name" : "secp256k1-populate"
+	}
+}

@@ -1,0 +1,3 @@
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/CMakeFiles/secp256k1-populate.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/CMakeFiles/edit_cache.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-subbuild/CMakeFiles/rebuild_cache.dir

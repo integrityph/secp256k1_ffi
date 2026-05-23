@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/bench.dir/bench.c.o -o ../bin/bench  -Wl,-rpath,/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/lib ../lib/libsecp256k1_ffi.so.6.0.1 

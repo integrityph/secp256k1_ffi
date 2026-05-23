@@ -1,0 +1,50 @@
+name: Secp256k1Bindings
+
+# Description for your reference.
+description: |
+  Direct FFI bindings to the Secp256k1 library.
+  Generated from the version specified in CMakeLists.txt.
+
+# Output file for the generated Dart code.
+output: 'lib/src/bindings/bindings.dart'
+
+# --- The Key Change ---
+# Point all paths to the directory created by CMake's FetchContent.
+# This assumes your build directory is named 'build'.
+headers:
+  entry-points:
+    # Path is now relative to the project root, into the build directory
+    - 'src/build/_deps/secp256k1-src/include/*.h'
+
+
+# Update the compiler options to use the same path.
+compiler-opts:
+  - '-Isrc/build/_deps/secp256k1-src/include'
+  - '-DSECP256K1_ENABLE_MODULE_ECDH=ON'
+  - '-DSECP256K1_ENABLE_MODULE_RECOVERY=ON'
+  - '-DSECP256K1_ENABLE_MODULE_EXTRAKEYS=ON'
+  - '-DSECP256K1_ENABLE_MODULE_SCHNORRSIG=ON'
+  - '-DSECP256K1_ENABLE_MODULE_MUSIG=ON'
+  - '-DSECP256K1_ENABLE_MODULE_ELLSWIFT=ON'
+  - '-fno-spell-checking'
+  - '-fspell-checking-limit=1'
+
+# --- Filtering (Highly Recommended) ---
+functions:
+  include:
+    - 'secp256k1_.*'
+
+  exclude:
+    - '.*_test'
+
+structs:
+  include:
+    - 'secp256k1_.*'
+
+unions:
+  include:
+    - 'secp256k1_.*'
+
+macros:
+  include:
+    - 'SECP256K1_.*'

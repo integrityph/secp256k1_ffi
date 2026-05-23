@@ -1,0 +1,1 @@
+export 'package:secp256k1_ffi/src/encoding/hex.dart';

@@ -1,0 +1,14 @@
+/home/dev/workspace/secp256k1_ffi/src/build/CMakeFiles/edit_cache.dir
+/home/dev/workspace/secp256k1_ffi/src/build/CMakeFiles/rebuild_cache.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/CMakeFiles/edit_cache.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/CMakeFiles/rebuild_cache.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/secp256k1.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/secp256k1_precomputed.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/bench.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/bench_internal.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/bench_ecmult.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/noverify_tests.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/tests.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/exhaustive_tests.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/edit_cache.dir
+/home/dev/workspace/secp256k1_ffi/src/build/_deps/secp256k1-build/src/CMakeFiles/rebuild_cache.dir
