@@ -1,5 +1,5 @@
 name: secp256k1_ffi
-description: "A new Flutter plugin project."
+description: "secp256k1 FFI plugin for flutter"
 version: 0.0.1
 homepage:
 
