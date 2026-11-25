@@ -9,7 +9,7 @@ final ffiBindings = _ffiBindingsInstance.bindings;
 final ffiLookupFunc = _FFIBindings.dynamicLibrary.lookup;
 
 class _FFIBindings {
-  static final _libName = 'secp256k1_ffi';
+  static final _libName = 'secp256k1';
   static final ffi.DynamicLibrary dynamicLibrary = _openDylib();
   final Secp256k1Bindings bindings;
 
@@ -27,11 +27,11 @@ class _FFIBindings {
       }
       if (Platform.isAndroid || Platform.isLinux) {
         // For Linux and Android, it's a standard shared object.
-        return ffi.DynamicLibrary.open('lib$_libName.so');
+        return ffi.DynamicLibrary.open('lib${_libName}_ffi.so');
       }
       if (Platform.isWindows) {
         // For Windows, it's a dynamic-link library.
-        return ffi.DynamicLibrary.open('$_libName.dll');
+        return ffi.DynamicLibrary.open('${_libName}_ffi.dll');
       }
     } catch (e) {
       logger.log("_openDylib failed to open secp256k1 binary. $e");
